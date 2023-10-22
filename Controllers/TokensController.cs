@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using System.Text;
 using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
+using ToDoAPI.Models;
+using ToDoAPI.DTOs;
 
 namespace ToDoAPI.Controllers;
 
@@ -21,13 +23,28 @@ public class TokensController : ControllerBase
 
     [HttpPost]
     [Route("")]
-    public IActionResult Post()
+    public IActionResult Post([FromBody] DTOs.Login data)
     {
+        var db = new ToDoDbContext();
+        var user = db.User.Find(data.Id);
+        if (user == null) return Unauthorized("user not found");
+
+        string hash = Convert.ToBase64String(
+            KeyDerivation.Pbkdf2(
+                password: data.Password,
+                salt: Convert.FromBase64String(user.Salt),
+                prf: KeyDerivationPrf.HMACSHA1,
+                iterationCount: 10000,
+                numBytesRequested: 256 / 8
+            )
+        );
+        if (user.Password != hash) return Unauthorized("wrong password");
+
         var desc = new SecurityTokenDescriptor();
         desc.Subject = new ClaimsIdentity(
             new Claim[] {
-                new Claim(ClaimTypes.Name, "chatchawit"),
-                new Claim(ClaimTypes.Role, "teacher")
+                new Claim(ClaimTypes.Name, user.Id),
+                new Claim(ClaimTypes.Role, "user")
             }
         );
         desc.NotBefore = DateTime.UtcNow;

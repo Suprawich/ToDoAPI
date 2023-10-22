@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using ToDoAPI.Models;
+using ToDoAPI.DTOs;
 
 namespace ToDoAPI.Controllers;
 
@@ -26,12 +27,15 @@ public class HelloWorldController : ControllerBase
 
 
     }
-    // [HttpGet]
-    // [Route("testdb")]
-    // public IActionResult Get()
-    // {
-    //     var db = new ToDoDbContext();
-    //     return Ok();
+    [HttpGet]
+    [Route("testdb")]
+    public IActionResult Get2()
+    {
+        var db = new ToDoDbContext();
 
-    // }
+        // LINQ
+        var users = from x in db.User where x.Id == "1234567890123" select new { nationalId = x.Id };
+        return Ok(users);
+
+    }
 }

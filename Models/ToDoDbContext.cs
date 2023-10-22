@@ -49,7 +49,7 @@ public partial class ToDoDbContext : DbContext
             entity.ToTable("user");
 
             entity.Property(e => e.Id).HasMaxLength(13);
-            entity.Property(e => e.Password).HasMaxLength(44);
+            entity.Property(e => e.Password).HasMaxLength(64);
             entity.Property(e => e.Salt).HasMaxLength(24);
         });
 
