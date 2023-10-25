@@ -18,17 +18,18 @@ public class ActivitiesController : ControllerBase
     }
 
     [HttpGet]
-    [Route("{Id}")]
+    [Route("")]
     [Authorize(Roles = "user")]
     public IActionResult Get(uint Id)
     {
+        
         var db = new ToDoDbContext();
-        var activity = (from a in db.Activity where a.Id == Id select
-        new {
-            id = a.Id,
-            name = a.Name,
-            when = a.When
-        }).FirstOrDefault();
+        var activity = from a in db.Activity /*where a.Id == Id*/ select a;
+        // new {
+        //     id = a.Id,
+        //     name = a.Name,
+        //     when = a.When
+        // }).FirstOrDefault();
 
         if (activity == null) return NotFound();
         return Ok(activity);
