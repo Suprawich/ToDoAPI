@@ -36,7 +36,7 @@ public partial class ToDoDbContext : DbContext
             entity.ToTable("activity");
 
             entity.Property(e => e.Id)
-                .ValueGeneratedNever()
+                // .ValueGeneratedNever()
                 .HasColumnType("int(10) unsigned");
             entity.Property(e => e.Name).HasMaxLength(50);
             entity.Property(e => e.When).HasColumnType("datetime");
